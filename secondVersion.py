@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def slow_version(dimension=32):
+def minimalizedVersion(dimension=32):
     start_time = time.time()
 
     skip = 256 / dimension
@@ -17,6 +17,8 @@ def slow_version(dimension=32):
     # Create a figure and 3D axis
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+    # Set equal aspect ratio for the 3D plot
+    ax.set_box_aspect([1, 1, 1])
     # # Extract the RGB components
     r, g, b = full_rgb_space[:, :, :, 0], full_rgb_space[:, :, :, 1], full_rgb_space[:, :, :, 2]
     # # Reshape the RGB arrays to match the dimensions of the scatter plot
@@ -35,8 +37,12 @@ def slow_version(dimension=32):
 
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"Czas wykonania funkcji: {execution_time} sekundy")
+    print(f"Czas uruchomienia: {execution_time} sekundy")
 
     plt.show()
+
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"Czas wyłączenia: {execution_time} sekundy")
 
 

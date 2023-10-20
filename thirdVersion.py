@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection  # Import Poly3DCollection
 import time
 
-def edges_version(dimension=32):
+def facesVersion(dimension=32):
     start_time = time.time()
 
     # Create a 3D figure
@@ -55,21 +55,25 @@ def edges_version(dimension=32):
     # Set the aspect ratio to be equal
     ax.set_box_aspect([dimension-1, dimension-1, dimension-1])
 
-    # Set labels for the axes
+    # # Set labels for the axes
     ax.set_xlabel('Red')
     ax.set_ylabel('Green')
     ax.set_zlabel('Blue')
-
-    # Set the limits for the axes
+    #
+    # # Set the limits for the axes
     ax.set_xlim(0, dimension-1)
     ax.set_ylim(0, dimension-1)
     ax.set_zlim(0, dimension-1)
 
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"Czas wykonania funkcji: {execution_time} sekundy")
+    print(f"Czas uruchomienia: {execution_time} sekundy")
 
     ax.axis('off')
     plt.show()
+
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"Czas wyłączenia: {execution_time} sekundy")
 
 
