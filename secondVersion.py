@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def slow_version():
+def slow_version(dimension=32):
     start_time = time.time()
 
-    skip = 8
+    skip = 256 / dimension
     cube_dimension = int(256 / skip)
     full_rgb_space = np.zeros((cube_dimension, cube_dimension, cube_dimension, 3), dtype=np.uint8)
     # Fill the 3D RGB cube
