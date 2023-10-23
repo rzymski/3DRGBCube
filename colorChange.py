@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter.font as font
 from first_version import slowest_version
 from secondVersion import minimalizedVersion
 from thirdVersion import facesVersion
@@ -6,15 +7,19 @@ class ColorChange:
     def __init__(self, root):
         self.root = root
         self.root.title("Color change Piotr Szumowski")
+        bigFont = font.Font(size=30, weight="bold")
 
-        self.convertRGBButton = Button(self.root, text="Convert RGB to CMYK", command=self.convertRGB, padx=20, pady=20)
+        self.convertRGBButton = Button(self.root, text="Convert RGB to CMYK", command=self.convertRGB, padx=50, pady=20)
         self.convertRGBButton.grid(row=0, column=0, rowspan=1, sticky="WE")
+        self.convertRGBButton['font'] = bigFont
 
         self.convertCMYKButton = Button(self.root, text="Convert CMYK to RGB", command=self.convertCMYK, padx=20, pady=20)
         self.convertCMYKButton.grid(row=1, column=0, rowspan=1, sticky="WE")
+        self.convertCMYKButton['font'] = bigFont
 
         self.renderCubeButton = Button(self.root, text="Render 3D RGB Cube", command=self.renderCube, padx=20, pady=20)
         self.renderCubeButton.grid(row=2, column=0, rowspan=1, sticky="WE")
+        self.renderCubeButton['font'] = bigFont
 
 
     def convertRGB(self):
@@ -51,8 +56,8 @@ class ColorChange:
         self.blueSlider = Scale(labelRGB, from_=0, to=255, orient=HORIZONTAL, variable=self.svBlue)
         self.blueSlider.grid(row=5, column=0, columnspan=4, sticky="nsew")
         #6 color
-        self.colorLabel = Label(labelRGB, background="#000000")
-        self.colorLabel.grid(row=6, column=0, columnspan=4, sticky="nsew")
+        self.colorRGBLabel = Label(labelRGB, background="#000000")
+        self.colorRGBLabel.grid(row=6, column=0, columnspan=4, sticky="nsew")
         #7 name of color
         self.cyanLabel = Label(labelRGB, text="CYAN")
         self.cyanLabel.grid(row=7, column=0)
@@ -114,7 +119,7 @@ class ColorChange:
         hex_red = format(red, '02x')
         hex_green = format(green, '02x')
         hex_blue = format(blue, '02x')
-        self.colorLabel.config(background=f"#{hex_red}{hex_green}{hex_blue}")
+        self.colorRGBLabel.config(background=f"#{hex_red}{hex_green}{hex_blue}")
 
     def conversionRGBtoCMYK(self, red, green, blue):
         if 255 < red < 0 or 255 < green < 0 or 255 < blue < 0:
@@ -124,7 +129,7 @@ class ColorChange:
         blue /= 255
         black = min(1-red, 1-green, 1-blue)
         cyan = int(100 * (1-red-black)/(1-black)) if black != 1 else "Nie istnieje"
-        magenta = int((1-green-black)/(1-black)) if black != 1 else "Nie istnieje"
+        magenta = int(100 * (1-green-black)/(1-black)) if black != 1 else "Nie istnieje"
         yellow = int(100 * (1-blue-black)/(1-black)) if black != 1 else "Nie istnieje"
         # print(f"red={red} green={green} blue={blue} cyan={cyan} magenta={magenta} yellow={yellow} black={black}")
         black = round(black * 100, 2)
@@ -173,8 +178,8 @@ class ColorChange:
         self.blackSlider = Scale(labelCMYK, from_=0, to=100, orient=HORIZONTAL, variable=self.svBlack)
         self.blackSlider.grid(row=7, column=0, columnspan=4, sticky="nsew")
         # 6 color
-        self.colorLabel = Label(labelCMYK, background="#000000")
-        self.colorLabel.grid(row=8, column=0, columnspan=4, sticky="nsew")
+        self.colorCMYKLabel = Label(labelCMYK, background="#000000")
+        self.colorCMYKLabel.grid(row=8, column=0, columnspan=4, sticky="nsew")
         # 7 name of color
         self.redLabel = Label(labelCMYK, text="RED")
         self.redLabel.grid(row=9, column=0)
@@ -226,11 +231,11 @@ class ColorChange:
         self.red.config(state=DISABLED)
         self.green.config(state=DISABLED)
         self.blue.config(state=DISABLED)
-        #
+        # convert rgb to hex
         hex_red = format(int(rgb_values[0]), '02x')
         hex_green = format(int(rgb_values[1]), '02x')
         hex_blue = format(int(rgb_values[2]), '02x')
-        self.colorLabel.config(background=f"#{hex_red}{hex_green}{hex_blue}")
+        self.colorCMYKLabel.config(background=f"#{hex_red}{hex_green}{hex_blue}")
 
     def conversionCMYKtoRGB(self, cyan, magenta, yellow, black):
         if 100 < cyan < 0 or 100 < magenta < 0 or 100 < yellow < 0 or 100 < black < 0:
