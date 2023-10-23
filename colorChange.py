@@ -1,10 +1,12 @@
 from tkinter import *
 import tkinter.font as font
-from first_version import slowest_version
-from secondVersion import minimalizedVersion
-from thirdVersion import facesVersion
-from fourth_version import optimizedVersion
-
+# from first_version import slowest_version
+# from secondVersion import minimalizedVersion
+# from thirdVersion import facesVersion
+# from fourth_version import optimizedVersion
+import numpy as np
+import matplotlib.pyplot as plt
+import time
 
 class ColorChange:
     def __init__(self, root):
@@ -253,9 +255,78 @@ class ColorChange:
         # print(f"red={red} green={green} blue={blue} cyan={cyan} magenta={magenta} yellow={yellow} black={black}")
         return red, green, blue
 
-    def renderCube(self):
-        # slowest_version() # najwolniejsza wersja ładuje sie ponad 30 sekund, a obracanie trwa wieki
-        # minimalizedVersion(dimension=32) # dla mniejszych wymiarow nawet lepsza niz 4 wersja
-        # facesVersion(dimension=32) #najładniejsza wersja i tez w miare szybka, ale troche wolniejsza niz minimalizedVersion
-        optimizedVersion(dimension=64)  # najlepsza wersja
+    # def renderCube(self):
+    #     # slowest_version() # najwolniejsza wersja ładuje sie ponad 30 sekund, a obracanie trwa wieki
+    #     # minimalizedVersion(dimension=32) # dla mniejszych wymiarow nawet lepsza niz 4 wersja
+    #     # facesVersion(dimension=32) #najładniejsza wersja i tez w miare szybka, ale troche wolniejsza niz minimalizedVersion
+    #     # optimizedVersion(dimension=64)  # najlepsza wersja
+    #     self.optimizedVersion(dimension=64)  # najlepsza wersja
 
+    def on_pick(self, event):
+        if event.artist == self.scatter and event.mouseevent.button == 3:
+            ind = event.ind[0]
+            clicked_point_data = self.points[ind]
+            print(f"Clicked point data: {clicked_point_data}")
+            self.render_board(clicked_point_data)
+
+    def renderCube(self, dimension=64):
+        start_time = time.time()
+
+        skip = 256 / dimension
+        cube_dimension = int(256 / skip)
+        count = 0
+        if dimension == 256:
+            count = 390152
+        elif dimension == 128:
+            count = 96776
+        elif dimension == 64:
+            count = 23816
+        else:
+            for i in range(cube_dimension):
+                for j in range(cube_dimension):
+                    for k in range(cube_dimension):
+                        if i == 0 or i == cube_dimension - 1 or j == 0 or j == cube_dimension - 1 or k == 0 or k == cube_dimension - 1:
+                            count += 1
+
+        self.points = np.zeros((count, 3), dtype=np.uint8)
+        count = 0
+        for i in range(cube_dimension):
+            for j in range(cube_dimension):
+                for k in range(cube_dimension):
+                    if i == 0 or i == cube_dimension - 1 or j == 0 or j == cube_dimension - 1 or k == 0 or k == cube_dimension - 1:
+                        color = (i * skip, j * skip, k * skip)
+                        self.points[count] = color
+                        count += 1
+        # print(len(points))
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # Set equal aspect ratio for the 3D plot
+        ax.set_box_aspect([1, 1, 1])
+        # # Extract the RGB components
+        r, g, b = self.points[:, 0], self.points[:, 1], self.points[:, 2]
+        # # Reshape the RGB arrays to match the dimensions of the scatter plot
+        r = np.ravel(r)
+        g = np.ravel(g)
+        b = np.ravel(b)
+        # # Create an array of colors for each point
+        colors = self.points / 255.0
+        # Display the RGB cube using scatter plot
+        scaling = 200
+        self.scatter = ax.scatter(r, g, b, c=colors, marker='s', s=scaling, alpha=1, picker=True)
+        ax.axis('off')
+
+        fig.canvas.mpl_connect('pick_event', self.on_pick)
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Czas uruchomienia: {execution_time} sekundy")
+
+        plt.show()
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Czas wyłączenia: {execution_time} sekundy")
+
+    def render_board(self, point):
+        height = point[2]
+        print(height)

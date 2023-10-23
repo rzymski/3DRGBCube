@@ -1,9 +1,3 @@
-# from fifth_version import optimizedVersion2
-# optimizedVersion2(128)
-#
-# from fourth_version import optimizedVersion
-# optimizedVersion(128)
-
 import tkinter as tk
 from colorChange import ColorChange
 
