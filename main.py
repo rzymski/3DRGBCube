@@ -1,11 +1,8 @@
-# from first_version import slowest_version
-# slowest_version()
+# from fifth_version import optimizedVersion2
+# optimizedVersion2(128)
 #
-# from secondVersion import minimalizedVersion
-# minimalizedVersion(dimension=32)
-#
-# from thirdVersion import facesVersion
-# facesVersion(dimension=32)
+# from fourth_version import optimizedVersion
+# optimizedVersion(128)
 
 import tkinter as tk
 from colorChange import ColorChange

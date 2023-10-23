@@ -3,6 +3,9 @@ import tkinter.font as font
 from first_version import slowest_version
 from secondVersion import minimalizedVersion
 from thirdVersion import facesVersion
+from fourth_version import optimizedVersion
+
+
 class ColorChange:
     def __init__(self, root):
         self.root = root
@@ -252,5 +255,7 @@ class ColorChange:
 
     def renderCube(self):
         # slowest_version() # najwolniejsza wersja ładuje sie ponad 30 sekund, a obracanie trwa wieki
-        minimalizedVersion(dimension=32) # najszybsza wersja
+        # minimalizedVersion(dimension=32) # dla mniejszych wymiarow nawet lepsza niz 4 wersja
         # facesVersion(dimension=32) #najładniejsza wersja i tez w miare szybka, ale troche wolniejsza niz minimalizedVersion
+        optimizedVersion(dimension=64)  # najlepsza wersja
+
