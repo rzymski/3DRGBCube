@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
+from mpl_toolkits.mplot3d import proj3d
+
 class ColorChange:
     def __init__(self, root):
         self.root = root
@@ -262,18 +264,58 @@ class ColorChange:
     #     # optimizedVersion(dimension=64)  # najlepsza wersja
     #     self.optimizedVersion(dimension=64)  # najlepsza wersja
 
-    def on_pick(self, event):
+    # def onPick(self, event):
+    #     if event.artist == self.scatter and event.mouseevent.button == 3:
+    #         ind = event.ind[0]
+    #         clicked_point_data = self.points[ind]
+    #         print(f"Clicked point data: {clicked_point_data}")
+    #         self.render_board(clicked_point_data)
+
+    def onPickMagic(self, event):
         if event.artist == self.scatter and event.mouseevent.button == 3:
-            ind = event.ind[0]
-            clicked_point_data = self.points[ind]
-            print(f"Clicked point data: {clicked_point_data}")
-            self.render_board(clicked_point_data)
+            xx = event.mouseevent.x
+            yy = event.mouseevent.y
+
+            # magic from https://stackoverflow.com/questions/10374930/matplotlib-annotating-a-3d-scatter-plot
+            x2, y2, z2 = proj3d.proj_transform(self.x[0], self.y[0], self.z[0], plt.gca().get_proj())
+            x3, y3 = self.ax.transData.transform((x2, y2))
+            # the distance
+            d = np.sqrt((x3 - xx) ** 2 + (y3 - yy) ** 2)
+
+            # print("distance=", d)
+
+            # find the closest by searching for min distance.
+            # All glory to https://stackoverflow.com/questions/10374930/matplotlib-annotating-a-3d-scatter-plot
+            imin = 0
+            dmin = 10000000
+            for i in range(len(self.x)):
+                # magic from https://stackoverflow.com/questions/10374930/matplotlib-annotating-a-3d-scatter-plot
+                x2, y2, z2 = proj3d.proj_transform(self.x[i], self.y[i], self.z[i], plt.gca().get_proj())
+                x3, y3 = self.ax.transData.transform((x2, y2))
+                # the distance magic from https://stackoverflow.com/questions/10374930/matplotlib-annotating-a-3d-scatter-plot
+                d = np.sqrt((x3 - xx) ** 2 + (y3 - yy) ** 2)
+                # We find the distance and also the index for the closest datapoint
+                if d < dmin:
+                    dmin = d
+                    imin = i
+
+                # print ("i=",i," d=",d, " imin=",imin, " dmin=",dmin)
+
+            # gives the incorrect data point index
+            point_index = int(event.ind[0])
+
+            # print("Xfixed=", self.x[imin], " Yfixed=", self.y[imin], " Zfixed=", self.z[imin], " PointIdxFixed=", imin)
+            # print("Xbroke=", self.x[point_index], " Ybroke=", self.y[point_index], " Zbroke=", self.z[point_index], " PointIdx=", point_index)
+            self.render_board([self.x[imin], self.y[imin], self.z[imin]])
+
 
     def renderCube(self, dimension=64):
         start_time = time.time()
 
         skip = 256 / dimension
         cube_dimension = int(256 / skip)
+        self.skipGlobal = skip
+        self.dimension = cube_dimension
         count = 0
         if dimension == 256:
             count = 390152
@@ -299,23 +341,24 @@ class ColorChange:
                         count += 1
         # print(len(points))
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        self.ax = fig.add_subplot(111, projection='3d')
         # Set equal aspect ratio for the 3D plot
-        ax.set_box_aspect([1, 1, 1])
+        self.ax.set_box_aspect([1, 1, 1])
         # # Extract the RGB components
         r, g, b = self.points[:, 0], self.points[:, 1], self.points[:, 2]
         # # Reshape the RGB arrays to match the dimensions of the scatter plot
-        r = np.ravel(r)
-        g = np.ravel(g)
-        b = np.ravel(b)
+        self.x = np.ravel(r)
+        self.y = np.ravel(g)
+        self.z = np.ravel(b)
         # # Create an array of colors for each point
         colors = self.points / 255.0
         # Display the RGB cube using scatter plot
         scaling = 200
-        self.scatter = ax.scatter(r, g, b, c=colors, marker='s', s=scaling, alpha=1, picker=True)
-        ax.axis('off')
+        self.scatter = self.ax.scatter(self.x, self.y, self.z, c=colors, marker='s', s=scaling, alpha=1, picker=True)
+        self.ax.axis('off')
 
-        fig.canvas.mpl_connect('pick_event', self.on_pick)
+        # fig.canvas.mpl_connect('pick_event', self.onPick)
+        fig.canvas.mpl_connect('pick_event', self.onPickMagic)
 
         end_time = time.time()
         execution_time = end_time - start_time
@@ -329,4 +372,17 @@ class ColorChange:
 
     def render_board(self, point):
         height = point[2]
-        print(height)
+        print(f"Kliknieto na wysokosci: {height}")
+        boardColors = np.zeros((256, 256, 3), dtype=np.uint8)
+        for i in range(256):
+            for j in range(256):
+                colorRG = (i, j, height)
+                boardColors[i, j] = colorRG
+        board = boardColors / 255.0  # Normalize the colors to be in the range [0, 1]
+        board = np.rot90(board)
+        # Create a new figure for the 2D board
+        fig_board = plt.figure()
+        ax_board = fig_board.add_subplot(111)
+        ax_board.imshow(board)
+        ax_board.axis('off')
+        plt.show()
