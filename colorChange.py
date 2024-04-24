@@ -135,11 +135,11 @@ class ColorChange:
         green /= 255
         blue /= 255
         black = min(1-red, 1-green, 1-blue)
-        cyan = int(100 * (1-red-black)/(1-black)) if black != 1 else "Nie istnieje"
-        magenta = int(100 * (1-green-black)/(1-black)) if black != 1 else "Nie istnieje"
-        yellow = int(100 * (1-blue-black)/(1-black)) if black != 1 else "Nie istnieje"
+        cyan = round(100 * (1-red-black)/(1-black)) if black != 1 else "Nie istnieje"
+        magenta = round(100 * (1-green-black)/(1-black)) if black != 1 else "Nie istnieje"
+        yellow = round(100 * (1-blue-black)/(1-black)) if black != 1 else "Nie istnieje"
         # print(f"red={red} green={green} blue={blue} cyan={cyan} magenta={magenta} yellow={yellow} black={black}")
-        black = round(black * 100, 2)
+        black = round(black * 100)
         return cyan, magenta, yellow, black
 
     def convertCMYK(self):
@@ -308,14 +308,11 @@ class ColorChange:
             # print("Xbroke=", self.x[point_index], " Ybroke=", self.y[point_index], " Zbroke=", self.z[point_index], " PointIdx=", point_index)
             self.render_board([self.x[imin], self.y[imin], self.z[imin]])
 
-
     def renderCube(self, dimension=64):
         start_time = time.time()
 
         skip = 256 / dimension
         cube_dimension = int(256 / skip)
-        self.skipGlobal = skip
-        self.dimension = cube_dimension
         count = 0
         if dimension == 256:
             count = 390152

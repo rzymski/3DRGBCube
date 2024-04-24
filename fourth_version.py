@@ -8,6 +8,7 @@ def optimizedVersion(dimension=32):
     skip = 256 / dimension
     cube_dimension = int(256 / skip)
     count = 0
+    # to speed process it replaced counting of elements with constant for some specific dimensions values
     if dimension == 256:
         count = 390152
     elif dimension == 128:
@@ -31,7 +32,6 @@ def optimizedVersion(dimension=32):
                     points[count] = color
                     count += 1
 
-    # print(len(points))
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     # Set equal aspect ratio for the 3D plot
